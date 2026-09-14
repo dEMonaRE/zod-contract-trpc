@@ -29,6 +29,9 @@ export interface TrpcPluginOptions {
   routerEntry: string
   /** Mount path for the tRPC endpoint (default `/trpc`). */
   mountPath?: string
+  /** Target OpenAPI version. `3.2` (default) routes subscriptions into top-level `webhooks:`;
+   *  `3.1` falls back to `paths:` POST entries (no native webhook field). */
+  openapiVersion?: '3.1.0' | '3.2.0'
 }
 
 export function trpcPlugin(opts: TrpcPluginOptions): Plugin {
@@ -53,18 +56,29 @@ export function trpcPlugin(opts: TrpcPluginOptions): Plugin {
       const procedures = extractProcedures(router)
       if (procedures.length === 0) return ctx
 
+      const openapiVersion = ctx.openapiVersion ?? '3.2.0'
       const paths: Record<string, Record<string, OpenAPISchema>> = {}
+      const webhooks: Record<string, { post: OpenAPISchema }> = {}
+
       for (const proc of procedures) {
-        const openapiPath = mountPath + '/' + proc.path.replace(/\./g, '/')
         const operation = buildOperation(proc)
-        const entry = paths[openapiPath] ?? {}
-        // tRPC uses POST for everything at the HTTP transport level
-        entry.post = operation
-        paths[openapiPath] = entry
+        if (proc.type === 'subscription' && openapiVersion === '3.2.0') {
+          // OpenAPI 3.2 native webhooks: key by dotted procedure path
+          webhooks[proc.path] = { post: operation }
+        } else {
+          const openapiPath = mountPath + '/' + proc.path.replace(/\./g, '/')
+          const entry = paths[openapiPath] ?? {}
+          // tRPC uses POST for everything at the HTTP transport level
+          entry.post = operation
+          paths[openapiPath] = entry
+        }
       }
 
       const ext = ctx.format === 'json' ? 'json' : 'yaml'
-      const payload = { paths }
+      const payload: Record<string, unknown> = { paths }
+      if (openapiVersion === '3.2.0' && Object.keys(webhooks).length > 0) {
+        payload.webhooks = webhooks
+      }
       const content =
         ctx.format === 'json' ? JSON.stringify(payload, null, 2) + '\n' : yaml(payload)
       ctx.outputs.set(`paths.${ext}`, content)

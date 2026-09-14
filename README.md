@@ -11,7 +11,27 @@ procedure, paths from the dotted procedure path).
 npm install --save-dev @aemrezorlu/zod-contract-trpc @trpc/server zod
 ```
 
-Peer deps: `@trpc/server` `^11.0.0`, `@aemrezorlu/zod-contract` `^0.1.0`.
+Peer deps: `@trpc/server` `^11.0.0`, `@aemrezorlu/zod-contract` `^0.3.0`.
+
+## Webhooks (OpenAPI 3.2)
+
+`t.procedure.subscription(...)` procedures are routed into the top-level
+`webhooks:` field introduced in OpenAPI 3.2, keyed by the dotted procedure
+path (`message.onNew`):
+
+```yaml
+webhooks:
+  message.onNew:
+    post:
+      summary: subscription message.onNew
+      requestBody: { ... }
+      responses:
+        '200': { ... }
+```
+
+Queries and mutations remain under `paths:` as `POST /trpc/<path>`. When
+the build target is OpenAPI 3.1, subscriptions fall back to the same `paths:`
+shape (no downgrade warning — `webhooks:` was the only 3.2-only addition).
 
 ## Usage
 
