@@ -1,6 +1,6 @@
 {
   "name": "@aemrezorlu/zod-contract-trpc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "zod-contract plugin: derive OpenAPI paths from a tRPC appRouter.",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,6 +12,22 @@
     }
   },
   "license": "MIT",
+  "keywords": [
+    "zod",
+    "openapi",
+    "trpc",
+    "routing",
+    "typescript",
+    "zod-contract"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dEMonaRE/zod-contract-trpc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dEMonaRE/zod-contract-trpc/issues"
+  },
+  "homepage": "https://github.com/dEMonaRE/zod-contract-trpc#readme",
   "files": [
     "dist",
     "README.md"
@@ -21,7 +37,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@aemrezorlu/zod-contract": "^0.1.0",
+    "@aemrezorlu/zod-contract": "^0.2.0",
     "@trpc/server": "^11.0.0"
   },
   "dependencies": {
