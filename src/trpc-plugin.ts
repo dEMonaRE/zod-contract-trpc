@@ -137,6 +137,14 @@ function buildOperation(proc: Procedure): OpenAPISchema {
     summary: `${proc.type} ${proc.path}`,
   }
 
+  // Tier 1 #2: surface schema.describe() on the operation
+  const desc = proc.output
+    ? (proc.output as { _def?: { description?: unknown } })._def?.description
+    : proc.input
+      ? (proc.input as { _def?: { description?: unknown } })._def?.description
+      : undefined
+  if (typeof desc === 'string' && desc.length > 0) operation.description = desc
+
   if (proc.input) {
     operation.requestBody = {
       required: true,
