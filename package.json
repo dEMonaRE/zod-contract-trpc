@@ -1,6 +1,6 @@
 {
   "name": "@aemrezorlu/zod-contract-trpc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "zod-contract plugin: derive OpenAPI paths from a tRPC appRouter.",
   "type": "module",
   "main": "./dist/index.js",
