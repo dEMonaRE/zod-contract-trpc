@@ -11,7 +11,7 @@ procedure, paths from the dotted procedure path).
 npm install --save-dev @aemrezorlu/zod-contract-trpc @trpc/server zod
 ```
 
-Peer deps: `@trpc/server` `^11.0.0`, `@aemrezorlu/zod-contract` `^0.3.0`.
+Peer deps: `@trpc/server` `^11.0.0`, `@aemrezorlu/zod-contract` `^0.4.0`.
 
 ## Webhooks (OpenAPI 3.2)
 
@@ -72,6 +72,7 @@ paths:
   /trpc/user/list:
     post:
       summary: query user.list
+      description: List users with optional limit.
       requestBody:
         content:
           application/json:
@@ -87,6 +88,12 @@ paths:
 
 `paths.json` is produced when the core is invoked with `--format json`.
 
+## Description (v0.3)
+
+`Schema.describe('...')` on the output (or input) schema is copied to
+`operation.description`. Use it to give API consumers one source of truth
+for each procedure's behavior.
+
 ## v0.1.0 scope
 
 - Walks `appRouter._def.procedures` to enumerate query / mutation / subscription procedures
@@ -96,6 +103,5 @@ paths:
 
 Not yet (roadmap):
 - Read procedures' `.input((ctx) => zodSchema)` for context-derived input schemas
-- Subscription support as OpenAPI 3.2 webhooks
 - Form-data / non-JSON procedure inputs
 - Splitting batched calls (`createCaller`) back into one entry per procedure
